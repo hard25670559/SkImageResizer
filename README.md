@@ -1,57 +1,119 @@
 # SkImageResizer
 
-**SkImageResizer** 是一個可以調整圖片大小的主控台專案，專案中有 50 張範例圖片。該程式並沒有使用**非同步**的方法，我們想讓同學們使用第一天所學的非同步觀念與技巧。
+## 硬體規格
 
-> 此專案使用 [.NET Core 3.1](https://dotnet.microsoft.com/download) 與跨平台的 [SkiaSharp](https://github.com/mono/SkiaSharp) 套件對圖片進行縮放作業。
-
-## 任務說明
-
-該專案中有兩個檔案：
-
-1. `Program.cs`
-
-    主程式不用修改，所有程式碼皆已寫好，包含執行時間計算部分。
-
-2. `SKImageProcess.cs`
-
-    目前的 `ResizeImagesAsync` 非同步方法，其實是直接複製 `ResizeImages` 同步方法的內容而已，並不是「真」非同步方法喔！
-
-    請修改 `ResizeImagesAsync` 非同步方法，用比較有效率的方式執行圖片縮放功能！
-
-> 這個 **SkImageResizer** 專案為 .NET Core 3.1 專案類型，請務必安裝 **.NET Core 工作負載**才能在 Visual Studio 2019 進行開發。若使用 Visual Studio Code 進行開發，請安裝 [C#](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csharp) 擴充套件。
-
-## 執行方式
-
-```sh
-cd SkImageResizer
-dotnet restore
-dotnet run -c Release
+```txt
+OS: macOS Catalina 10.15.6（19G2021）
+CPU: Intel Core i9-9980HK CPU 2.40GHz, 1 CPU, 16 logical and 8 physical cores
+RAM:64 GB 2667 MHz DDR4
 ```
-
-## 繳交作業
-
-1. 建議大家先對此專案 Fork 到自己的 GitHub 帳號下，然後在進行開發，開發完成後，請將專案網址回覆在 FB 社團的貼文留言中，同學之間也可以互相學習觀摩作法！ 🙂
-
-2. 請提供執行環境的硬體規格說明，提供資料的範例如下：
-
-    ```txt
-    作業系統：Microsoft Windows [Version 10.0.18363.1082]
-    　ＣＰＵ：1 Sockets, 2 Cores, 4 Logical processors
-    　ＲＡＭ：16GB
-    ```
-
-## 注意事項
-
-1. 程式碼需兼顧**可讀性**(請適度排版)與**執行效率**
-2. 效能提升比例公式已經寫好，寫好程式碼之後直接執行即可看到效能提升比例。
 
 ## 效能測試
 
-[BenchmarkDotNet](https://benchmarkdotnet.org/) 是一套威力強大的 .NET 效能測試套件，可以用來相對客觀的分析 .NET 程式碼的執行效率。
+```js
+// AfterActualRun
+WorkloadResult   1: 1 op, 9383115740.00 ns, 9.3831 s/op
+WorkloadResult   2: 1 op, 9131962825.00 ns, 9.1320 s/op
+WorkloadResult   3: 1 op, 9031332224.00 ns, 9.0313 s/op
+WorkloadResult   4: 1 op, 8680617983.00 ns, 8.6806 s/op
+WorkloadResult   5: 1 op, 8684606783.00 ns, 8.6846 s/op
+WorkloadResult   6: 1 op, 8975169240.00 ns, 8.9752 s/op
+WorkloadResult   7: 1 op, 8791425765.00 ns, 8.7914 s/op
+WorkloadResult   8: 1 op, 9149966093.00 ns, 9.1500 s/op
+WorkloadResult   9: 1 op, 9274175321.00 ns, 9.2742 s/op
+WorkloadResult  10: 1 op, 8847284872.00 ns, 8.8473 s/op
+WorkloadResult  11: 1 op, 8904593658.00 ns, 8.9046 s/op
+WorkloadResult  12: 1 op, 9273440828.00 ns, 9.2734 s/op
+WorkloadResult  13: 1 op, 9634368670.00 ns, 9.6344 s/op
+WorkloadResult  14: 1 op, 9031182049.00 ns, 9.0312 s/op
+WorkloadResult  15: 1 op, 9646307712.00 ns, 9.6463 s/op
+WorkloadResult  16: 1 op, 9038425269.00 ns, 9.0384 s/op
+WorkloadResult  17: 1 op, 9595095745.00 ns, 9.5951 s/op
+WorkloadResult  18: 1 op, 8938965327.00 ns, 8.9390 s/op
+WorkloadResult  19: 1 op, 9215435096.00 ns, 9.2154 s/op
+WorkloadResult  20: 1 op, 9466959492.00 ns, 9.4670 s/op
+WorkloadResult  21: 1 op, 9500735836.00 ns, 9.5007 s/op
+WorkloadResult  22: 1 op, 9278609727.00 ns, 9.2786 s/op
+WorkloadResult  23: 1 op, 9575687506.00 ns, 9.5757 s/op
+WorkloadResult  24: 1 op, 9179427096.00 ns, 9.1794 s/op
+WorkloadResult  25: 1 op, 8927371583.00 ns, 8.9274 s/op
+WorkloadResult  26: 1 op, 9283304951.00 ns, 9.2833 s/op
+WorkloadResult  27: 1 op, 9378069138.00 ns, 9.3781 s/op
+WorkloadResult  28: 1 op, 8896974326.00 ns, 8.8970 s/op
+WorkloadResult  29: 1 op, 9162452766.00 ns, 9.1625 s/op
+WorkloadResult  30: 1 op, 8967395502.00 ns, 8.9674 s/op
+WorkloadResult  31: 1 op, 8984686865.00 ns, 8.9847 s/op
 
-**SkImageResizer.Benchmark** 專案已經將測試的方法寫好，他會分析同步與非同步程式的執行效率，並提供完整的測試結果報告。執行的方式與步驟如下：
+// AfterAll
+// Benchmark Process 3993 has exited with code 0
 
-```sh
-cd SkImageResizer.Benchmark
-dotnet run -c Release
+Mean = 9.156 s, StdErr = 0.049 s (0.54%), N = 31, StdDev = 0.275 s
+Min = 8.681 s, Q1 = 8.953 s, Median = 9.150 s, Q3 = 9.331 s, Max = 9.646 s
+IQR = 0.378 s, LowerFence = 8.387 s, UpperFence = 9.897 s
+ConfidenceInterval = [8.976 s; 9.336 s] (CI 99.9%), Margin = 0.180 s (1.97% of Mean)
+Skewness = 0.19, Kurtosis = 1.99, MValue = 2
+
+// ***** BenchmarkRunner: Finish  *****
+
+// * Export *
+  BenchmarkDotNet.Artifacts/results/SkImageResizer.Benchmark.SkImageResizerBenchmark-report.csv
+  BenchmarkDotNet.Artifacts/results/SkImageResizer.Benchmark.SkImageResizerBenchmark-report-github.md
+  BenchmarkDotNet.Artifacts/results/SkImageResizer.Benchmark.SkImageResizerBenchmark-report.html
+
+// * Detailed results *
+SkImageResizerBenchmark.ResizeImages: Job-OIYMPL(InvocationCount=1, UnrollFactor=1) [N=5]
+Runtime = .NET Core 3.1.4 (CoreCLR 4.700.20.20201, CoreFX 4.700.20.22101), X64 RyuJIT; GC = Concurrent Workstation
+Mean = 9.068 s, StdErr = 0.044 s (0.48%), N = 15, StdDev = 0.169 s
+Min = 8.843 s, Q1 = 8.948 s, Median = 9.012 s, Q3 = 9.169 s, Max = 9.455 s
+IQR = 0.221 s, LowerFence = 8.617 s, UpperFence = 9.499 s
+ConfidenceInterval = [8.887 s; 9.249 s] (CI 99.9%), Margin = 0.181 s (1.99% of Mean)
+Skewness = 0.66, Kurtosis = 2.47, MValue = 2
+-------------------- Histogram --------------------
+[8.753 s ; 9.108 s) | @@@@@@@@@@
+[9.108 s ; 9.299 s) | @@@@
+[9.299 s ; 9.545 s) | @
+---------------------------------------------------
+
+SkImageResizerBenchmark.ResizeImagesAsync: Job-OIYMPL(InvocationCount=1, UnrollFactor=1) [N=5]
+Runtime = .NET Core 3.1.4 (CoreCLR 4.700.20.20201, CoreFX 4.700.20.22101), X64 RyuJIT; GC = Concurrent Workstation
+Mean = 9.156 s, StdErr = 0.049 s (0.54%), N = 31, StdDev = 0.275 s
+Min = 8.681 s, Q1 = 8.953 s, Median = 9.150 s, Q3 = 9.331 s, Max = 9.646 s
+IQR = 0.378 s, LowerFence = 8.387 s, UpperFence = 9.897 s
+ConfidenceInterval = [8.976 s; 9.336 s] (CI 99.9%), Margin = 0.180 s (1.97% of Mean)
+Skewness = 0.19, Kurtosis = 1.99, MValue = 2
+-------------------- Histogram --------------------
+[8.566 s ; 8.828 s) | @@@
+[8.828 s ; 9.058 s) | @@@@@@@@@@@
+[9.058 s ; 9.322 s) | @@@@@@@@@
+[9.322 s ; 9.671 s) | @@@@@@@@
+---------------------------------------------------
+
+// * Summary *
+
+BenchmarkDotNet=v0.12.1, OS=macOS Catalina 10.15.6 (19G2021) [Darwin 19.6.0]
+Intel Core i9-9980HK CPU 2.40GHz, 1 CPU, 16 logical and 8 physical cores
+.NET Core SDK=3.1.300
+  [Host]     : .NET Core 3.1.4 (CoreCLR 4.700.20.20201, CoreFX 4.700.20.22101), X64 RyuJIT
+  Job-OIYMPL : .NET Core 3.1.4 (CoreCLR 4.700.20.20201, CoreFX 4.700.20.22101), X64 RyuJIT
+
+InvocationCount=1  UnrollFactor=1  
+
+|            Method | N |    Mean |    Error |   StdDev |
+|------------------ |-- |--------:|---------:|---------:|
+|      ResizeImages | 5 | 9.068 s | 0.1809 s | 0.1692 s |
+| ResizeImagesAsync | 5 | 9.156 s | 0.1800 s | 0.2749 s |
+
+// * Legends *
+  N      : Value of the 'N' parameter
+  Mean   : Arithmetic mean of all measurements
+  Error  : Half of 99.9% confidence interval
+  StdDev : Standard deviation of all measurements
+  1 s    : 1 Second (1 sec)
+
+// ***** BenchmarkRunner: End *****
+// ** Remained 0 benchmark(s) to run **
+Run time: 00:09:52 (592.55 sec), executed benchmarks: 2
+
+Global total time: 00:09:57 (597.33 sec), executed benchmarks: 2
+// * Artifacts cleanup *
 ```

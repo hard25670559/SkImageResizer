@@ -26,6 +26,7 @@ namespace SkImageResizer
             var allFiles = FindImages(sourcePath);
             foreach (var filePath in allFiles)
             {
+                Console.WriteLine("TID\t" + Thread.GetCurrentProcessorId());
                 var bitmap = SKBitmap.Decode(filePath);
                 var imgPhoto = SKImage.FromBitmap(bitmap);
                 var imgName = Path.GetFileNameWithoutExtension(filePath);
@@ -43,6 +44,7 @@ namespace SkImageResizer
                 using var data = scaledImage.Encode(SKEncodedImageFormat.Jpeg, 100);
                 using var s = File.OpenWrite(Path.Combine(destPath, imgName + ".jpg"));
                 data.SaveTo(s);
+                Console.WriteLine(imgName + ".jpg" + " Done with TID\t" + Thread.GetCurrentProcessorId());
             }
         }
 
@@ -53,28 +55,32 @@ namespace SkImageResizer
                 Directory.CreateDirectory(destPath);
             }
 
-            await Task.Yield();
-
             var allFiles = FindImages(sourcePath);
             foreach (var filePath in allFiles)
             {
-                var bitmap = SKBitmap.Decode(filePath);
-                var imgPhoto = SKImage.FromBitmap(bitmap);
-                var imgName = Path.GetFileNameWithoutExtension(filePath);
+                Console.WriteLine("TID\t" + Thread.GetCurrentProcessorId());
+                SKBitmap bitmap = SKBitmap.Decode(filePath);
+                SKImage imgPhoto = SKImage.FromBitmap(bitmap);
+                string imgName = Path.GetFileNameWithoutExtension(filePath);
 
-                var sourceWidth = imgPhoto.Width;
-                var sourceHeight = imgPhoto.Height;
+                int sourceWidth = imgPhoto.Width;
+                int sourceHeight = imgPhoto.Height;
 
-                var destinationWidth = (int)(sourceWidth * scale);
-                var destinationHeight = (int)(sourceHeight * scale);
+                int destinationWidth = (int)(sourceWidth * scale);
+                int destinationHeight = (int)(sourceHeight * scale);
 
-                using var scaledBitmap = bitmap.Resize(
-                    new SKImageInfo(destinationWidth, destinationHeight),
-                    SKFilterQuality.High);
-                using var scaledImage = SKImage.FromBitmap(scaledBitmap);
-                using var data = scaledImage.Encode(SKEncodedImageFormat.Jpeg, 100);
-                using var s = File.OpenWrite(Path.Combine(destPath, imgName + ".jpg"));
-                data.SaveTo(s);
+                await Task.Factory.StartNew(() => {
+                    Console.WriteLine(imgName + ".jpg" + " Save TID\t" + Thread.GetCurrentProcessorId());
+                    using SKBitmap scaledBitmap = bitmap.Resize(
+                        new SKImageInfo(destinationWidth, destinationHeight),
+                        SKFilterQuality.High);
+                    using SKImage scaledImage = SKImage.FromBitmap(scaledBitmap);
+                    using SKData data = scaledImage.Encode(SKEncodedImageFormat.Jpeg, 100);
+                    using FileStream s = File.OpenWrite(Path.Combine(destPath, imgName + ".jpg"));
+                    data.SaveTo(s);
+                    Console.WriteLine(imgName + ".jpg" + " Async done with TID\t" + Thread.GetCurrentProcessorId());
+                });
+
             }
         }
 
