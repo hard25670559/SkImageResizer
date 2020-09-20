@@ -60,10 +60,12 @@ namespace SkImageResizer
             foreach (var filePath in allFiles)
             {
                 Task t = Task.Run(() => {
-                    if (token.IsCancellationRequested) {
-                        Console.WriteLine("他媽不幹了");
-                        return ;
-                    }
+                    // if (token.IsCancellationRequested) {
+                    //     Console.WriteLine("他媽不幹了");
+                    //     return ;
+                    // }
+                    token.ThrowIfCancellationRequested();
+                    
                     Console.WriteLine("TID\t" + Thread.GetCurrentProcessorId());
                     SKBitmap bitmap = SKBitmap.Decode(filePath);
                     SKImage imgPhoto = SKImage.FromBitmap(bitmap);
