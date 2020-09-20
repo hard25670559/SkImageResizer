@@ -48,7 +48,7 @@ namespace SkImageResizer
             }
         }
 
-        public async Task ResizeImagesAsync(string sourcePath, string destPath, double scale)
+        public async Task ResizeImagesAsync(string sourcePath, string destPath, double scale, CancellationToken token)
         {
             if (!Directory.Exists(destPath))
             {
@@ -56,20 +56,24 @@ namespace SkImageResizer
             }
 
             var allFiles = FindImages(sourcePath);
+            List<Task> taskList = new List<Task>();
             foreach (var filePath in allFiles)
             {
-                Console.WriteLine("TID\t" + Thread.GetCurrentProcessorId());
-                SKBitmap bitmap = SKBitmap.Decode(filePath);
-                SKImage imgPhoto = SKImage.FromBitmap(bitmap);
-                string imgName = Path.GetFileNameWithoutExtension(filePath);
+                Task t = Task.Run(() => {
+                    if (token.IsCancellationRequested) {
+                        Console.WriteLine("他媽不幹了");
+                        return ;
+                    }
+                    Console.WriteLine("TID\t" + Thread.GetCurrentProcessorId());
+                    SKBitmap bitmap = SKBitmap.Decode(filePath);
+                    SKImage imgPhoto = SKImage.FromBitmap(bitmap);
+                    string imgName = Path.GetFileNameWithoutExtension(filePath);
 
-                int sourceWidth = imgPhoto.Width;
-                int sourceHeight = imgPhoto.Height;
+                    int sourceWidth = imgPhoto.Width;
+                    int sourceHeight = imgPhoto.Height;
 
-                int destinationWidth = (int)(sourceWidth * scale);
-                int destinationHeight = (int)(sourceHeight * scale);
-
-                await Task.Factory.StartNew(() => {
+                    int destinationWidth = (int)(sourceWidth * scale);
+                    int destinationHeight = (int)(sourceHeight * scale);
                     Console.WriteLine(imgName + ".jpg" + " Save TID\t" + Thread.GetCurrentProcessorId());
                     using SKBitmap scaledBitmap = bitmap.Resize(
                         new SKImageInfo(destinationWidth, destinationHeight),
@@ -81,7 +85,10 @@ namespace SkImageResizer
                     Console.WriteLine(imgName + ".jpg" + " Async done with TID\t" + Thread.GetCurrentProcessorId());
                 });
 
+                taskList.Add(t);
             }
+
+            await Task.WhenAll(taskList);
         }
 
         /// <summary>

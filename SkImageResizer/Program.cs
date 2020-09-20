@@ -9,9 +9,17 @@ namespace SkImageResizer
     class Program
     {
         static readonly Stopwatch sw = new Stopwatch();
+        static CancellationTokenSource cts = new CancellationTokenSource();
 
         static async Task Main(string[] args)
         {
+            // Ctrl + c
+            Console.CancelKeyPress += ((object sender, ConsoleCancelEventArgs e) => {
+                cts.Cancel();
+
+                e.Cancel = true;
+            });
+
             var imageProcess = new SKImageProcess();
             var sourcePath = Path.Combine(Environment.CurrentDirectory, "images");
             var destinationPath1 = Path.Combine(Environment.CurrentDirectory, "output1");
@@ -36,7 +44,7 @@ namespace SkImageResizer
 
             try
             {
-                await imageProcess.ResizeImagesAsync(sourcePath, destinationPath2, 2.0);
+                await imageProcess.ResizeImagesAsync(sourcePath, destinationPath2, 2.0, cts.Token);
             }
             catch (OperationCanceledException ex)
             {
